@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+    <com.careers.parallaxeffectlib.view.NotifyingScrollView
+        android:id="@id/notifying_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <View
+                android:id="@id/proxie_home_header"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"/>
+
+            <LinearLayout
+                android:id="@+id/add_remove"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/proxie_home_header">
+
+                <Button
+                    android:id="@+id/add_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add View"/>
+
+                <Button
+                    android:id="@+id/remove_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="remove View"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/dynamic_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/add_remove"
+                android:orientation="vertical"></LinearLayout>
+
+        </RelativeLayout>
+    </com.careers.parallaxeffectlib.view.NotifyingScrollView>
+</RelativeLayout>

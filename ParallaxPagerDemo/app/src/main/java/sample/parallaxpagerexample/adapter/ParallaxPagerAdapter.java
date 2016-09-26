@@ -5,7 +5,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.util.SparseArrayCompat;
 
+import com.careers.parallaxeffectlib.listeners.Constant;
+import com.careers.parallaxeffectlib.listeners.OnFragmentSelectedListener;
+import com.careers.parallaxeffectlib.listeners.ScrollTabHolder;
+
+import sample.parallaxpagerexample.Constants;
+import sample.parallaxpagerexample.R;
 import sample.parallaxpagerexample.fragment.FirstFragment;
 import sample.parallaxpagerexample.fragment.SecondFragment;
 import sample.parallaxpagerexample.fragment.ThirdFragment;
@@ -19,22 +26,50 @@ public class ParallaxPagerAdapter extends FragmentPagerAdapter {
 
   private Fragment[] fragments;
   private Context activity;
+  private SparseArrayCompat<ScrollTabHolder> mScrollTabHolders;
+  private ScrollTabHolder mListener;
 
 
   public ParallaxPagerAdapter(FragmentManager fm, Context activity) {
     super(fm);
     this.activity = activity;
+    mScrollTabHolders = new SparseArrayCompat<ScrollTabHolder>();
 
     createFragmentArray();
   }
 
+
+  public void setTabHolderScrollingContent(ScrollTabHolder listener) {
+    mListener = listener;
+  }
+
+  public SparseArrayCompat<ScrollTabHolder> getScrollTabHolders() {
+    return mScrollTabHolders;
+  }
+
+
   @Override
   public Fragment getItem(int position) {
+
     Fragment fragment = null;
 
     if (fragments != null && fragments.length > position) {
       fragment = fragments[position];
+
+      if (position == 0 && mListener != null) {
+        ((FirstFragment) fragment).setScrollTabHolder(mListener);
+
+      } else if (position == 1 && mListener != null) {
+        ((SecondFragment) fragment).setScrollTabHolder(mListener);
+
+      } else if (position == 2 && mListener != null) {
+        ((ThirdFragment) fragment).setScrollTabHolder(mListener);
+
+      }
     }
+
+    ((OnFragmentSelectedListener)fragment).onFragmentSelected(activity.getResources().getDimensionPixelSize(R.dimen.parallax_header_height));
+
     return fragment;
   }
 
@@ -47,11 +82,11 @@ public class ParallaxPagerAdapter extends FragmentPagerAdapter {
   public CharSequence getPageTitle(int position) {
     switch (position) {
       case 0:
-        return "First";
+        return "Scroller";
       case 1:
-        return "Second";
+        return "Fruit Scroller";
       case 2:
-        return "Third";
+        return "Fruit List";
 
 
     }
@@ -64,27 +99,37 @@ public class ParallaxPagerAdapter extends FragmentPagerAdapter {
   private void createFragmentArray() {
     this.fragments = new Fragment[MAX_SIZE];
     for (int idx = 0; idx < fragments.length; ++idx) {
-      Fragment fragment = null;
-      Bundle bundle = new Bundle();
 
+      Bundle bundle = new Bundle();
       switch (idx) {
         case 0:
-          fragment = new FirstFragment();
+          FirstFragment firstFragment = new FirstFragment();
+          bundle.putInt(Constant.ARG_POSITION, idx);
+          bundle.putInt(Constant.SCROLL_HEADER_HEIGHT, activity.getResources().getDimensionPixelSize(R.dimen
+            .parallax_header_height));
+          firstFragment.setArguments(bundle);
+          mScrollTabHolders.put(idx, firstFragment);
+          fragments[idx] = firstFragment;
           break;
         case 1:
-          fragment = new SecondFragment();
+          SecondFragment secondFragment = new SecondFragment();
+          bundle.putInt(Constant.ARG_POSITION, idx);
+          bundle.putInt(Constant.SCROLL_HEADER_HEIGHT, activity.getResources().getDimensionPixelSize(R.dimen
+            .parallax_header_height));
+          secondFragment.setArguments(bundle);
+          mScrollTabHolders.put(idx, secondFragment);
+          fragments[idx] = secondFragment;
           break;
         case 2:
-          fragment = new ThirdFragment();
+          ThirdFragment thirdFragment = new ThirdFragment();
+          bundle.putInt(Constant.ARG_POSITION, idx);
+          bundle.putInt(Constant.SCROLL_HEADER_HEIGHT, activity.getResources().getDimensionPixelSize(R.dimen
+            .parallax_header_height));
+          thirdFragment.setArguments(bundle);
+          mScrollTabHolders.put(idx, thirdFragment);
+          fragments[idx] = thirdFragment;
           break;
-
       }
-      if (fragment != null) {
-//        bundle.putInt(Constants.POSITION, idx);
-//        bundle.putAll(this.bundle);
-//        fragment.setArguments(bundle);
-      }
-      fragments[idx] = fragment;
     }
   }
 

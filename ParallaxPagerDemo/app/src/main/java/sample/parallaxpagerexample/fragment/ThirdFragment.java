@@ -3,6 +3,7 @@ package sample.parallaxpagerexample.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,12 +79,15 @@ public class ThirdFragment extends ParallaxListViewFragment implements View.OnCl
     alNames.add("    Apple   ");
     alNames.add("    Banana  ");
     alNames.add("    Orange  ");
+
     alNames.add("    Apple   ");
     alNames.add("    Banana  ");
     alNames.add("    Orange  ");
+
     alNames.add("    Apple   ");
     alNames.add("    Banana  ");
     alNames.add("    Orange  ");
+
     alNames.add("    Apple   ");
     alNames.add("    Banana  ");
     alNames.add("    Orange  ");
@@ -95,6 +99,7 @@ public class ThirdFragment extends ParallaxListViewFragment implements View.OnCl
       case R.id.add_view:
         alNames.add("    Orange  ");
         parallaxListAdapter.notifyDataSetChanged();
+        evaluateHeightAfterLoading();
 
         break;
       case R.id.remove_view:
@@ -102,8 +107,15 @@ public class ThirdFragment extends ParallaxListViewFragment implements View.OnCl
           alNames.remove(alNames.size() - 1);
 
           parallaxListAdapter.notifyDataSetChanged();
+          evaluateHeightAfterLoading();
         }
         break;
     }
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    Log.e("Header count",""+listParallax.getHeaderViewsCount());
   }
 }

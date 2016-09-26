@@ -19,10 +19,9 @@ import com.careers.parallaxeffectlib.listeners.OnFragmentSelectedListener;
 
 /**
  * Created by Abha Dhiman on 23-08-2016.
+ * <p>Fragment with ListView, will handle the parallax effect for ViewPager.
  */
 public class ParallaxListViewFragment extends ScrollTabHolderFragment implements AbsListView.OnScrollListener, OnFragmentSelectedListener {
-
-  private final String LOG_TAG = "LIST_PARALLAX";
 
   private boolean canScroll = true;
   private int mListViewHeight;
@@ -39,6 +38,7 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
   private ListView mListView;
   private LinearLayout mListHeader;
   private ListAdapter adapter;
+  private int scrollState;
 
 
   @Override
@@ -65,13 +65,16 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
     super.onViewCreated(view, savedInstanceState);
     mListView = (ListView) view.findViewById(R.id.notifying_list_view);
 
-    mListHeader = new LinearLayout(activity);
-    mListHeader.setOrientation(LinearLayout.HORIZONTAL);
-    mListHeader.setBackgroundColor(Color.TRANSPARENT);
-    mListHeader.setLayoutParams(new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT, ListView.LayoutParams.WRAP_CONTENT));
-    mListHeader.setPadding(0, headerHeight - mListView.getDividerHeight(), 0, 0);
+    // set default header
+    if(mListView.getHeaderViewsCount() == 0) {
+      mListHeader = new LinearLayout(activity);
+      mListHeader.setOrientation(LinearLayout.HORIZONTAL);
+      mListHeader.setBackgroundColor(Color.TRANSPARENT);
+      mListHeader.setLayoutParams(new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT, ListView.LayoutParams.WRAP_CONTENT));
+      mListHeader.setPadding(0, headerHeight - mListView.getDividerHeight(), 0, 0);
 
-    mListView.addHeaderView(mListHeader);
+      mListView.addHeaderView(mListHeader);
+    }
     mListView.setOnScrollListener(this);
   }
 
@@ -93,22 +96,29 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
     if (adapter == null)
       adapter = mListView.getAdapter();
 
-    if (adapter != null && adapter.getCount() - mListView.getHeaderViewsCount() > 0) {
+
+//    if (adapter != null && (adapter.getCount() - mListView.getHeaderViewsCount() > 0))  {
+    if (adapter != null )  {
       if (largeContentAvailable) {
 
+
         if (this.mListViewHeight - (headerTranslationY - scrollHeight) > screenHeight - Utils.getActionBarHeight(activity, activity.getTheme())) {
+
           mListHeader.setPadding(0, headerHeight - mListView.getDividerHeight(), 0, 0);
           canScroll = true;
           mListView.setSelectionFromTop(1, scrollHeight);
         } else {
+
           canScroll = false;
           mListHeader.setPadding(0, headerHeight - mListView.getDividerHeight() - (headerTranslationY - scrollHeight), 0, 0);
         }
       } else {
+
         canScroll = false;
         mListHeader.setPadding(0, headerHeight - mListView.getDividerHeight() - (headerTranslationY - scrollHeight), 0, 0);
       }
     } else {
+
       canScroll = false;
       prevHeaderHeight = headerTranslationY;
       sHeight = scrollHeight;
@@ -119,6 +129,9 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
 
   }
 
+  /**
+   * Method used to Check whether ListView contains content to scroll enough..
+   */
   private void checkForLargeContent() {
     screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
     mActionBarHeight = Utils.getActionBarHeight(activity, activity.getTheme());
@@ -136,6 +149,9 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
 
   }
 
+  /**
+   * @return : method will evaluate and return the height of ListView Content.
+   */
   private int getListViewHeight() {
     if (mListView == null)
       return 0;
@@ -179,9 +195,11 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
     return height;
   }
 
+
+
   @Override
   public void onScrollStateChanged(AbsListView view, int scrollState) {
-
+    this.scrollState=scrollState;
   }
 
   @Override
@@ -194,32 +212,21 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
   }
 
 
+  /**
+   * @param view : Reference of list view.
+   * <p>Method will evaluate that how much ListView scrolled upwards or downwards </p>
+   */
   private void getScrolledHeight(AbsListView view) {
-    int scrollY = getScrollY(view);
-    if (scrollY != 0) {
+    int scrollY = Utils.getScrollY(view,headerHeight);
+    if (scrollState != SCROLL_STATE_IDLE) {
       sHeight = Math.max(-scrollY, activity.mMinHeaderTranslation) + prevHeaderHeight;
     }
   }
 
-  public int getScrollY(AbsListView view) {
 
-    View c = view.getChildAt(0);
-
-    if (c == null) {
-      return 0;
-    }
-
-    int firstVisiblePosition = view.getFirstVisiblePosition();
-    int top = c.getTop();
-
-    int headerHeight1 = 0;
-    if (firstVisiblePosition >= 1) {
-      headerHeight1 = headerHeight;
-    }
-
-    return -top + firstVisiblePosition * c.getHeight() + headerHeight1;
-  }
-
+  /**
+   * <p>Method will be used in child fragment whenenver List View content will dynamically change. It will recalculate & adjust the listview</p>
+   */
   public void evaluateHeightAfterLoading() {
     adjustScroll(sHeight, prevHeaderHeight);
   }

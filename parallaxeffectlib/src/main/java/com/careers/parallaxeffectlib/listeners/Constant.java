@@ -1,12 +1,14 @@
 package com.careers.parallaxeffectlib.listeners;
 
 /**
- * Created by Abha Dhiman on 23-08-2016.
+ * Created by Abha Dhiman
+ * <p>Interface contains constant used in the Library</p>
  */
 public interface Constant {
 
+  // constant to identify the header height
   String SCROLL_HEADER_HEIGHT = "scrollHeaderHeight";
-  String ARG_POSITION = "position";
-  String LOG_TAG="ParallaxEffectLib";
 
+  // constant to identify the fragment position
+  String ARG_POSITION = "position";
 }

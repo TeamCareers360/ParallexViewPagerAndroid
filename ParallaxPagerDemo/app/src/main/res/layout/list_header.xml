@@ -13,12 +13,12 @@
             android:id="@+id/add_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add View"/>
+            android:text="Add Fruit"/>
 
         <Button
             android:id="@+id/remove_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Remove View"/>
+            android:text="Remove Fruit"/>
     </LinearLayout>
 </LinearLayout>

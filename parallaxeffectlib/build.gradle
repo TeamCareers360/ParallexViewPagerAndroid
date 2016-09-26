@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-//apply plugin: 'maven'
+
 
 android {
     compileSdkVersion 23
@@ -18,17 +18,6 @@ android {
         }
     }
 }
-
-//uploadArchives {
-//    repositories.mavenDeployer {
-//        pom.groupId = 'com.careers.parallaxeffectlib'
-//        pom.artifactId = 'parallax-lib'
-//        pom.version = android.defaultConfig.versionName
-//        // Add other pom properties here if you want (developer details / licenses)
-//        repository(url: "file:./releases/")
-//    }
-//}
-
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])

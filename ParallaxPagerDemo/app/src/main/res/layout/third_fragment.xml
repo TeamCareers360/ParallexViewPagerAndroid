@@ -8,6 +8,9 @@
     <ListView
         android:id="@id/notifying_list_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
+        android:layout_height="wrap_content"
+        android:dividerHeight="2dp"
+        android:divider="#000000"
+        ></ListView>
 
 </LinearLayout>

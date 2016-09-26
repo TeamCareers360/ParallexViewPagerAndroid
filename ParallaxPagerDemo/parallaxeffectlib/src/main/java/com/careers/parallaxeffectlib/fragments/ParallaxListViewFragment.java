@@ -5,10 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -20,14 +17,11 @@ import com.careers.parallaxeffectlib.Utils;
 import com.careers.parallaxeffectlib.listeners.Constant;
 import com.careers.parallaxeffectlib.listeners.OnFragmentSelectedListener;
 
-import java.util.ArrayList;
-
 /**
  * Created by Abha Dhiman on 23-08-2016.
+ * <p>Fragment with ListView, will handle the parallax effect for ViewPager.
  */
 public class ParallaxListViewFragment extends ScrollTabHolderFragment implements AbsListView.OnScrollListener, OnFragmentSelectedListener {
-
-  private final String LOG_TAG = "LIST_PARALLAX";
 
   private boolean canScroll = true;
   private int mListViewHeight;
@@ -44,6 +38,7 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
   private ListView mListView;
   private LinearLayout mListHeader;
   private ListAdapter adapter;
+  private int scrollState;
 
 
   @Override
@@ -53,7 +48,6 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
     if (args != null) {
       mPosition = args.getInt(Constant.ARG_POSITION);
       headerHeight = args.getInt(Constant.SCROLL_HEADER_HEIGHT);
-//      Log.e(Constant.LOG_TAG, "ParallexScrollViewFragment onCreate() scrollHeaderHeight : " + headerHeight);
     }
   }
 
@@ -71,16 +65,17 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
     super.onViewCreated(view, savedInstanceState);
     mListView = (ListView) view.findViewById(R.id.notifying_list_view);
 
-    mListHeader = new LinearLayout(activity);
-    mListHeader.setOrientation(LinearLayout.HORIZONTAL);
-    mListHeader.setBackgroundColor(Color.TRANSPARENT);
-    mListHeader.setLayoutParams(new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT, ListView.LayoutParams.WRAP_CONTENT));
-    mListHeader.setPadding(0, headerHeight - mListView.getDividerHeight(), 0, 0);
+    // set default header
+    if(mListView.getHeaderViewsCount() == 0) {
+      mListHeader = new LinearLayout(activity);
+      mListHeader.setOrientation(LinearLayout.HORIZONTAL);
+      mListHeader.setBackgroundColor(Color.TRANSPARENT);
+      mListHeader.setLayoutParams(new ListView.LayoutParams(ListView.LayoutParams.MATCH_PARENT, ListView.LayoutParams.WRAP_CONTENT));
+      mListHeader.setPadding(0, headerHeight - mListView.getDividerHeight(), 0, 0);
 
-    mListView.addHeaderView(mListHeader);
+      mListView.addHeaderView(mListHeader);
+    }
     mListView.setOnScrollListener(this);
-
-
   }
 
   @Override
@@ -98,37 +93,32 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
 
     checkForLargeContent();
 
-//    int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
-
-    /*Log.e(LOG_TAG, "Article Adjust Scroll");
-    Log.e(LOG_TAG, "Scroll Height " + scrollHeight);
-    Log.e(LOG_TAG, "headerTranslationY " + headerTranslationY);
-*/
     if (adapter == null)
       adapter = mListView.getAdapter();
-    Log.e(LOG_TAG, " mLISTADAPTER DATA " + adapter.getCount());
-    if (adapter != null && adapter.getCount() - mListView.getHeaderViewsCount() > 0) {
+
+//    if (adapter != null && (adapter.getCount() - mListView.getHeaderViewsCount() > 0))  {
+    if (adapter != null )  {
       if (largeContentAvailable) {
-        Log.e(LOG_TAG, "Large content available");
+
 
         if (this.mListViewHeight - (headerTranslationY - scrollHeight) > screenHeight - Utils.getActionBarHeight(activity, activity.getTheme())) {
-          Log.e(LOG_TAG, "Large content available1");
+
           mListHeader.setPadding(0, headerHeight - mListView.getDividerHeight(), 0, 0);
           canScroll = true;
           mListView.setSelectionFromTop(1, scrollHeight);
         } else {
+
           canScroll = false;
-          Log.e(LOG_TAG, "Large content available2");
           mListHeader.setPadding(0, headerHeight - mListView.getDividerHeight() - (headerTranslationY - scrollHeight), 0, 0);
         }
       } else {
+
         canScroll = false;
-        Log.e(LOG_TAG, "Large content not available");
         mListHeader.setPadding(0, headerHeight - mListView.getDividerHeight() - (headerTranslationY - scrollHeight), 0, 0);
       }
     } else {
+
       canScroll = false;
-      Log.e(LOG_TAG, "Article List null");
       prevHeaderHeight = headerTranslationY;
       sHeight = scrollHeight;
     }
@@ -138,14 +128,15 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
 
   }
 
+  /**
+   * Method used to Check whether ListView contains content to scroll enough..
+   */
   private void checkForLargeContent() {
-//    if (mListViewHeight == 0) {
     screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
     mActionBarHeight = Utils.getActionBarHeight(activity, activity.getTheme());
     mListViewHeight = getListViewHeight();
 
     if (mListHeader.getPaddingTop() < headerHeight) {
-      Log.e(Constant.LOG_TAG, "checkForLArgeContent : INSIDE HEIGHT CHECK");
       mListViewHeight = mListViewHeight - mListHeader.getPaddingTop() + headerHeight;
     }
 
@@ -154,9 +145,12 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
     } else {
       largeContentAvailable = false;
     }
-//    }
+
   }
 
+  /**
+   * @return : method will evaluate and return the height of ListView Content.
+   */
   private int getListViewHeight() {
     if (mListView == null)
       return 0;
@@ -176,11 +170,9 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
       if (childAt != null) {
         if (i % headerCount == 0) {
           height += headerHeight;
-          Log.e(LOG_TAG, " header padding top " + height + " adapter.count -> " + size);
         } else {
           childAt.measure(0, 0);
           height += childAt.getMeasuredHeight();
-          Log.e(LOG_TAG, " height :  " + height + " measured height " + childAt.getMeasuredHeight());
         }
       }
     }
@@ -199,12 +191,15 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
     int totalDividersHeight = mListView.getDividerHeight() * (size - 1);
     height += totalDividersHeight;
 
-    Log.e(LOG_TAG, "***** Height : " + height);
     return height;
   }
 
+
+
   @Override
   public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+    this.scrollState=scrollState;
 
   }
 
@@ -215,84 +210,34 @@ public class ParallaxListViewFragment extends ScrollTabHolderFragment implements
       mScrollTabHolder.onScroll(view, mPosition);
     }
     getScrolledHeight(view);
-
-
   }
 
 
+  /**
+   * @param view : Reference of list view.
+   * <p>Method will evaluate that how much ListView scrolled upwards or downwards </p>
+   */
   private void getScrolledHeight(AbsListView view) {
-    int scrollY = getScrollY(view);
-    if (scrollY != 0) {
+    int scrollY = Utils.getScrollY(view,headerHeight);
+    if (scrollState != SCROLL_STATE_IDLE) {
       sHeight = Math.max(-scrollY, activity.mMinHeaderTranslation) + prevHeaderHeight;
+
     }
-//    Log.e(Constant.LOG_TAG, "----- ---- scrollY = " + scrollY + " **************  " + Math.max(-scrollY, activity.mMinHeaderTranslation));
   }
 
-  public int getScrollY(AbsListView view) {
-//    Log.e(Constant.LOG_TAG, "DividerHeight :- " + ((ListView) view).getDividerHeight());
 
-    View c = view.getChildAt(0);
-
-    if (c == null) {
-//      Log.e(Constant.LOG_TAG, "c IS NULL");
-      return 0;
-    }
-
-    int firstVisiblePosition = view.getFirstVisiblePosition();
-//    Log.e(Constant.LOG_TAG, "FirstVisiblePosition :- " + firstVisiblePosition);
-    int top = c.getTop();
-    Log.e(Constant.LOG_TAG, "TOP VALUE ---------- " + top);
-
-    int headerHeight1 = 0;
-    if (firstVisiblePosition >= 1) {
-      headerHeight1 = headerHeight;
-    }
-
-    return -top + firstVisiblePosition * c.getHeight() + headerHeight1;
-  }
-
+  /**
+   * <p>Method will be used in child fragment whenenver List View content will dynamically change. It will recalculate & adjust the listview</p>
+   */
   public void evaluateHeightAfterLoading() {
-//    Log.e(LOG_TAG, "evaluate height");
-//    mListViewHeight = 0;
+
     adjustScroll(sHeight, prevHeaderHeight);
-
-//    checkForLargeContent();
-//    Log.e(LOG_TAG, " After check for large content " + largeContentAvailable);
-//    if (largeContentAvailable) {
-//      if (loadMoreData) {
-//        return;
-//      }
-//      Log.e("parallex", "evaluate height : Large content available " + sHeight + " headerHeight " + prevHeaderHeight);
-//
-//      if (isFilterApplied) {
-//
-//        Log.e("parallex", "IS FILTER APPLIED");
-//        adjustScroll(sHeight, prevHeaderHeight);
-//        canScroll = true;
-//      } else {
-//        Log.e("parallex", "IS NOT APPLIED");
-//        mListView.setSelectionFromTop(1, sHeight);
-//        canScroll = true;
-//      }
-//    } else {
-//      Log.e("parallex", "evaluate height : Large content not available " + sHeight + " headerHeight " + headerHeight);
-//      if (!isFilterApplied) {
-//        int paddingTop = (int) (headerHeight - mListView.getDividerHeight() - (prevHeaderHeight - sHeight));
-//        mListHeader.setPadding(0, paddingTop, 0, 0);
-//        Log.e(LOG_TAG, "padding Top : " + paddingTop + " (int) (Utils.height * 0.45) - articleListView.getDividerHeight() : " + (headerHeight - mListView.getDividerHeight()));
-//      } else {
-//        Log.e("parallex", "evaluate height if filter applied");
-//        adjustScroll(sHeight, prevHeaderHeight);
-//      }
-//    }
-
   }
 
 
   @Override
   public void onFragmentSelected(int lHeaderHeight) {
     if (headerHeight == 0) {
-      Log.e(LOG_TAG, " on participating college fragment : " + lHeaderHeight);
       headerHeight = lHeaderHeight;
       if (mListHeader != null)
         mListHeader.setPadding(0, headerHeight - mListView.getDividerHeight(), 0, 0);

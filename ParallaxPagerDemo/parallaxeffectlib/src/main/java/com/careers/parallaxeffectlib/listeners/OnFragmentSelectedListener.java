@@ -1,11 +1,10 @@
 package com.careers.parallaxeffectlib.listeners;
 
 /**
- * Created by Abha Dhiman on 24-08-2016.
+ * Created by Abha Dhiman.
+ * <p>Interface used to notify Header height to fragment</p>
  */
 public interface OnFragmentSelectedListener {
-
-
   /**
    * @param lHeaderHeight : header view height
    * <p>When height is set dynamically to view ,it updates the fragments</p>

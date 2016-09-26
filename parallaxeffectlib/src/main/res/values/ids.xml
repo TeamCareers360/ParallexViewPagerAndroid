@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="notifying_scroll_view" type="id"/>
+    <item name="proxie_home_header" type="id"/>
+
+    <item name="notifying_list_view" type="id"/>
+
+</resources>

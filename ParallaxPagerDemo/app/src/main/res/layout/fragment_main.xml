@@ -1,0 +1,47 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#aa3300"
+        android:minHeight="?attr/actionBarSize">
+    </android.support.v7.widget.Toolbar>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        >
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+        <RelativeLayout
+            android:id="@+id/activity_proxie_header"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/parallax_header_height">
+
+            <ImageView
+                android:id="@+id/image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/space"
+                android:scaleType="fitXY"
+                />
+            <sample.parallaxpagerexample.uicomponent.SlidingTabLayout
+                android:id="@+id/sliding_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@android:color/white"/>
+        </RelativeLayout>
+    </FrameLayout>
+
+</RelativeLayout>
